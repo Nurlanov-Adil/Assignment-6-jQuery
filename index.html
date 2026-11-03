@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CAKE FILE — Anime Mystery</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <header class="main-header">
+        <div class="header-content">
+            <span class="case-label">AITU MYSTERY CLUB</span>
+
+            <h1>CAKE FILE</h1>
+
+            <p class="subtitle">The Missing Piece</p>
+
+            <p class="description">
+                A birthday party. Twenty-one guests. One missing cake.
+                Can you solve the mystery?
+            </p>
+
+            <div class="case-info">
+                <span>DATE: UNKNOWN</span>
+                <span>TIME: 19:30 — 22:30</span>
+                <span>STATUS: UNSOLVED</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="house">
+
+            <div class="section-heading">
+                <span class="section-number">01 / LOCATION</span>
+                <h2>The Party House</h2>
+                <p>Explore the rooms and investigate the guests.</p>
+            </div>
+
+            <div class="floor" id="floor2">
+
+                <div class="floor-label">SECOND FLOOR</div>
+
+                <div class="rooms">
+
+                    <div class="room balcony" id="balcony">
+                        <div class="room-header">
+                            <h3>Balcony</h3>
+                            <span>FLOOR 02</span>
+                        </div>
+                        <div class="guests"></div>
+                    </div>
+
+                    <div class="room hall" id="hall">
+                        <div class="room-header">
+                            <h3>Hall</h3>
+                            <span>FLOOR 02</span>
+                        </div>
+                        <div class="guests"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="floor" id="floor1">
+
+                <div class="floor-label">FIRST FLOOR</div>
+
+                <div class="rooms">
+
+                    <div class="room kitchen" id="kitchen">
+                        <div class="room-header">
+                            <h3>Kitchen</h3>
+                            <span>FLOOR 01</span>
+                        </div>
+                        <div class="guests"></div>
+                    </div>
+
+                    <div class="room living" id="living">
+                        <div class="room-header">
+                            <h3>Living Room</h3>
+                            <span>FLOOR 01</span>
+                        </div>
+                        <div class="guests"></div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+        <section class="investigation">
+
+            <div class="section-heading">
+                <span class="section-number">02 / INVESTIGATION</span>
+                <h2>Detective Cases</h2>
+                <p>Select a case to search for clues.</p>
+            </div>
+
+            <div id="caseButtons"></div>
+
+            <div class="detective-notes">
+                <h3>DETECTIVE NOTES</h3>
+
+                <div id="result">
+                    Select a case to begin your investigation.
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <p>CAKE FILE — AITU Mystery Club</p>
+        <p>Assignment 6 | jQuery Investigation</p>
+    </footer>
+
+</body>
+</html>
