@@ -12,10 +12,12 @@ $(function () {
 
   function minutes(time) { const parts=time.split(':'); return +parts[0]*60 + +parts[1]; }
   function makeGuest(g) {
+    // A guest name is a unique identity, including repeated Miras arrival cases.
+    $('#guest-'+g.name).finish().remove();
     const $g=$('<article>', {
       id:'guest-'+g.name, class:'guest color-'+g.color+(g.aitu?' aitu':''),
       tabindex:0, role:'button', 'aria-label':'Open '+g.name,
-      'data-name':g.name, 'data-time':g.time, 'data-minutes':minutes(g.time),
+      'data-name':g.name, 'data-color':g.color, 'data-time':g.time, 'data-minutes':minutes(g.time),
       'data-aitu':String(g.aitu), 'data-items':g.items.join(' '), 'data-order':g.order
     }).data('guest', $.extend(true,{},g));
     $.each(g.items, function(_,item){ $g.addClass('has-'+item); });
@@ -33,7 +35,7 @@ $(function () {
   // Finish an in-flight layout once, then handle the latest input against a stable DOM.
   function settle() {
     if(finishLayout) finishLayout();
-    $('.guest').stop(true,true).css({top:0,left:0});
+    $('.guest').finish().css({top:0,left:0});
   }
   function hideDetailNow() {
     detailVersion++;
@@ -77,8 +79,8 @@ $(function () {
     {title:'Which rooms have fewer than 6 guests?',short:'Rooms under six',run:()=>$('.room').filter(function(){return $(this).find('.guest').length<6;})},
     {title:'Which rooms have a cup but no glasses?',short:'Cup without glasses',run:()=>$('.room:has(.guest.has-cup):not(:has(.guest.has-glasses))')},
     {title:'Who came first to each room?',short:'Earliest arrivals',run:()=>$('.guest').filter(function(){return !$(this).siblings('.guest').filter((_,g)=>+$(g).attr('data-minutes')<+$(this).attr('data-minutes')).length;})},
-    {title:'Miras arrives between Askar and Inkar.',short:'Welcome Miras',run:()=>makeGuest({name:'Miras',color:'blue',time:'21:20',aitu:true,items:['phone'],order:100}).hide().insertAfter('#guest-Askar').fadeIn(400)},
-    {title:'Natasha says goodbye and goes home.',short:'Goodbye Natasha',run:()=>$('#guest-Natasha').fadeOut(400,function(){$(this).remove();updateCounts();})},
+    {title:'Miras arrives between Askar and Inkar.',short:'Welcome Miras',run:()=>makeGuest({name:'Miras',color:'blue',time:'21:20',aitu:true,items:['phone'],order:+$('#guest-Askar').attr('data-order')+0.5}).hide().insertAfter('#guest-Askar').fadeIn(400)},
+    {title:'Natasha says goodbye and goes home.',short:'Goodbye Natasha',run:()=>$('#guest-Natasha').animate({top:-12},130).animate({top:0},130).fadeOut(400,function(){$(this).remove();updateCounts();})},
     {title:'Who took the cake?',short:'Find the cake thief',run:()=>$('.floor[data-floor="1"] .guest.has-crumbs:not(.has-cup)').filter(function(){return +$(this).attr('data-minutes')>1260 && +$(this).attr('data-minutes')<1290;}).filter(function(){return $(this).prev('.guest').add($(this).next('.guest')).is('.aitu');})}
   ];
   function resultFor($found, number) {
@@ -101,7 +103,7 @@ $(function () {
     const $guests=$found.filter('.guest').add($found.filter('.room').find('.guest'));
     if(MOTION) $('.guest').not($guests).stop(true,true).fadeTo(300,0.2);
     // Fade for mutation cases must finish before the single jump starts.
-    $guests.promise().done(function(){
+    if(index!==18) $guests.promise().done(function(){
       $guests.filter(function(){return $.contains(document,this);}).animate({top:-12},130).animate({top:0},130);
     });
     $('#chain').text(entry.run.toString().replace(/^\(\)=>/,''));
@@ -113,7 +115,7 @@ $(function () {
   });
   $('#cases').on('click','.case-button',function(){runCase(+$(this).attr('data-case')-1);});
   $('#clear').on('click',clearSpotlight);
-  $('#reset').on('click',function(){party=$.extend(true,[],originalParty);buildParty();clearSpotlight();});
+  $('#reset').on('click',function(){settle();party=$.extend(true,[],originalParty);buildParty();clearSpotlight();});
   buildParty();
   if(MOTION) {
     $('#hint').text('Click a guest for details. Esc closes the card.');
@@ -141,7 +143,7 @@ $(function () {
       const g=$guest.data('guest'); const room=$guest.closest('.room').attr('data-room');
       const $card=$('#detail').stop(true,false).empty().prop('hidden',false);
       $('<button>',{class:'close',text:'×','aria-label':'Close card'}).appendTo($card);
-      $guest.find('.avatar').clone().appendTo($card).css('border-color',$guest.css('--color'));
+      $guest.find('.avatar').clone().appendTo($card).css('border','3px solid '+$guest.css('--color'));
       $('<h2>',{text:g.name}).appendTo($card);
       $('<p>').text('Came at '+g.time+'. '+(g.aitu?'AITU student.':'Not an AITU student.')+' Wears '+g.color+'.').appendTo($card);
       let things='Came with nothing.';
